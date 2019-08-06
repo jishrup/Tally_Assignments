@@ -9,7 +9,7 @@ private:
 public:
 	stack()
 	{
-		arr = new T[10];
+		arr = new T[8];
 		pos = -1;
 	}
 	void push(T a)
