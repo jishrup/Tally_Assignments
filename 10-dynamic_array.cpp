@@ -17,7 +17,7 @@ public:
 		b[size] = a;
 		size++;
 	}
-	void display(int n)
+	void operator [] (int n)
 	{
 		if (n < size)
 		{
@@ -31,10 +31,10 @@ public:
 };
 int main() {
 	Dynamic<int> x;
-	cout << "enter the numbers" << endl;
 	int ch = 1;
 	while (ch)
 	{
+		cout << "enter the numbers" << endl;
 		int a;
 		cin >> a;
 		x.insert(a);
@@ -43,6 +43,6 @@ int main() {
 	}
 	cout << "enter the position to be accessed" << endl;
 	cin >> ch;
-	x.display(ch);
+	x[ch];
 	system("pause");
 }
