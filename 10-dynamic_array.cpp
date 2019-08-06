@@ -1,67 +1,48 @@
 #include <iostream>
+#include<process.h>
 using namespace std;
 template <class T> class Dynamic
 {
 private:
-	T * begin;
-	T *end;
-	size_t d_size = 10;
-	size_t c_index = 0;
-	size_t c_size;
-
+	T * b;
+	int size = 0;
 public:
 	Dynamic()
 	{
-		begin = new T[d_size];
-		end = begin;
-		c_size = 10;
-	}
-	Dynamic(size_t size)
-	{
-		begin = new T[size];
-		end = begin;
-		c_size = size;
-	}
-	T operator[](size_t index)
-	{
-		try {
-			if (index >= c_index)
-				throw runtime_error("Array index out of bounds");
-		}
-		catch (runtime_error e) {
-			cerr << "handle this error : " << e.what() << endl;
-			return EXIT_FAILURE;
-		}
-		return *(begin + index);
+		b = (T *)malloc(sizeof(T));
 	}
 	void insert(T a)
 	{
-		if (c_index == c_size) {
-			T *temp = new T[c_size + d_size];
-			c_size += d_size;
-			T *curr = begin;
-			T *next = temp;
-			while (curr) {
-				*temp = *curr;
-				temp++;
-				curr++;
-			}
-			end = temp;
-			delete[] begin;
-			begin = next;
+		b = (T*)realloc(b, (size + 1) * sizeof(T));
+		b[size] = a;
+		size++;
+	}
+	void display(int n)
+	{
+		if (n < size)
+		{
+			cout << b[n] << endl;
 		}
-		*end = a;
-		end++;
-		c_size++;
-		c_index++;
+		else
+		{
+			cout << "wrong access" << endl;
+		}
 	}
 };
 int main() {
 	Dynamic<int> x;
-	x.insert(2);
-	x.insert(2);
-	x.insert(4);
-	x.insert(2);
-	x.insert(5);
-	cout << x[5] << endl;
+	cout << "enter the numbers" << endl;
+	int ch = 1;
+	while (ch)
+	{
+		int a;
+		cin >> a;
+		x.insert(a);
+		cout << "do you want to continue" << endl << "1.yes 0.No" << endl;
+		cin >> ch;
+	}
+	cout << "enter the position to be accessed" << endl;
+	cin >> ch;
+	x.display(ch);
+	system("pause");
 }
