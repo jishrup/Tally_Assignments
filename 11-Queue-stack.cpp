@@ -31,6 +31,7 @@ public:
 		}
 		else
 		{
+			cout << "the element poped" << arr[pos] << endl;
 			pos--;
 		}
 	}
@@ -78,6 +79,7 @@ public:
 		}
 		else
 		{
+			cout << "the element poped" << arr[pos] << endl;
 			fr++;
 		}
 	}
@@ -94,31 +96,52 @@ public:
 
 int main()
 {
+	int ch=1;
 	stack<int> s;
 	queue<int> q;
-	s.push(1);
-	s.push(2);
-	s.push(3);
-	s.push(4);
-	s.push(5);
-	s.push(6);
-	s.pop();
-	s.pop();
-	s.pop();
-	s.print();
+	cout << "stack implementation" << endl;
+	int n;
+	while (ch)
+	{
+		cout << <<"enter your choice" << endl << "1.push" << endl << "2.pop" << endl << "3.exit" << endl;
+		cin >> ch;
+		switch (ch)
+		{
+		case 1:
+			cout << "enter the data to be pushed" << endl;
+			cin >> n;
+			s.push(n);
+			break;
+		case 2:
+			s.pop();
+			break;
+		default:
+			cout << "wrong choice" << endl;
+			break;
 
-	cout << endl;
+		}
+	}
+	cout << "queue implementation" << endl;
+	while (ch)
+	{
+		cout << <<"enter your choice" << endl << "1.enter" << endl << "2.delete" << endl << "3.exit" << endl;
+		cin >> ch;
+		switch (ch)
+		{
+		case 1:
+			cout << "enter the data to be entered" << endl;
+			cin >> n;
+			q.qe(n);
+			break;
+		case 2:
+			q.dq();
+			break;
+		default:
+			cout << "wrong choice" << endl;
+			break;
 
-	q.qe(1);
-	q.qe(2);
-	q.qe(3);
-	q.qe(4);
-	q.qe(5);
-	q.qe(6);
-	q.dq();
-	q.dq();
-	q.dq();
-	q.print();
-
+		}
+	}
+	system("pause");
 	return 0;
 }
