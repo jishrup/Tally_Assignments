@@ -1,626 +1,696 @@
 #include <iostream>
-#include <cstring>
+#include <string.h>
+#include <vector>
+#include <fstream>
+#include <string>
+#include <sstream>
 using namespace std;
-
-struct node {
-	long int id;
-	char name[50];
-	int age;
-	node* link;
-};
-
-class Linked_list {
-private:
-	node * head, *tail;
+int l = 0;
+int p = 0;
+int k = 0;
+char* create()
+{
+	char *ptr, c;
+	int a = 0;
+	ptr = (char*)malloc(1);
+	while (cin.get(c))
+	{
+		if ('\n' == c )
+		{
+			ptr = (char*)realloc(ptr, a + 1);
+			ptr[a] = '\0';
+			break;
+		}
+		else
+		{
+			ptr = (char*)realloc(ptr, a + 1);
+			ptr[a] = c;
+			a++;
+		}
+	}
+	return ptr;
+}
+class employe {
 public:
-	Linked_list() {
-		head = nullptr;
-		tail = nullptr;
-	}
-	void insertion();
-	void insertAtBeginning(long int id, char name[], int age);
-	void insertAtEnd(long int id, char name[], int age);
-	void insertAtPosition(long int id, char name[], int age, int pos);
-	void insertAfterName(long int id, char name[], int age, char search_name[]);
-
-	void deletion();
-	void deleteAtBeginning();
-	void deleteAtEnd();
-	void deleteAtPosition(int pos);
-	void deleteById(long int id);
-	void deleteAll();
-
-	void finding();
-	void findByName(char name[]);
-	void findById(long int id);
-	void findByAge(int age);
-	void findByPosition(int pos);
-
-	void sort();
-
-	void print();
-
-	void bubbleSort(char param[]);
-	void swap(node* n1, node* n2);
-};
-
-int main() {
-	Linked_list l;
-	int ch = 0;
-	while (ch != 10) {
-		cout << "Linked List Implemetation" << endl;
-		cout << "1. Insert" << endl;
-		cout << "2. Delete" << endl;
-		cout << "3. Find" << endl;
-		cout << "4. Sort" << endl;
-		cout << "5. Print" << endl;
-		cout << "Enter your choice: ";
-		cin >> ch;
-		cout << endl;
-		switch (ch) {
-		case 1: {
-			l.insertion();
-			break;
-		}
-		case 2: {
-			l.deletion();
-			break;
-		}
-		case 3: {
-			l.finding();
-			break;
-		}
-		case 4: {
-			l.sort();
-			break;
-		}
-		case 5: {
-			l.print();
-			break;
-		}
-		case 10: {
-			cout << "Exiting." << endl;
-			break;
-		}
-		default: {
-			cout << "Invalid choice" << endl;
-			break;
-		}
-		}
-	}
-	return 0;
-}
-
-void Linked_list::insertion() {
-	int ch;
-	long int id;
-	char name[50];
+	int id;
 	int age;
-	cout << "Enter the id: ";
-	cin >> id;
-	cout << endl;
-	cout << "Enter the name: ";
-	cin >> name;
-	cout << endl;
-	cout << "Enter the age: ";
-	cin >> age;
-	cout << endl;
-	cout << "\t" << "1. Insert at beginning" << endl;
-	cout << "\t" << "2. Insert at end" << endl;
-	cout << "\t" << "3. Insert at position" << endl;
-	cout << "\t" << "4. Insert after name" << endl;
-	cout << "\t" << "Enter your choice: ";
-	cin >> ch;
-	cout << endl;
-	switch (ch) {
-	case 1: {
-		insertAtBeginning(id, name, age);
-		break;
+	char* name ;
+	employe* link;
+	bool comp(employe* t, int opt)
+	{
+		if (opt == 1)
+		{
+			if (strlen(name) < strlen(t->name))
+			{
+				return 1;
+			}
+			else if (strlen(name) > strlen(t->name))
+			{
+				return 0;
+			}
+			else
+			{
+				int i = 0;
+				while (name[i])
+				{
+					if (name[i] < t->name[i])
+						return 1;
+					else if (name[i] > t->name[i])
+						return 0;
+					else
+						i++;
+				}
+			}
+		}
+		if (opt == 2)
+		{
+			return id < t->id;
+		}
+		if (opt == 3)
+		{
+			return age < t->age;
+		}
 	}
-	case 2: {
-		insertAtEnd(id, name, age);
-		break;
+};
+void insert(employe* &head, employe* node, int ind)
+{
+	if (ind == 0)
+	{
+		node->link = head;
+		head = node;
+		return;
 	}
-	case 3: {
-		int pos;
-		cout << "Enter the position: ";
-		cin >> pos;
-		cout << endl;
-		insertAtPosition(id, name, age, pos);
-		break;
+	if (!head)
+	{
+		head = node;
+		return;
 	}
-	case 4: {
-		char search_name[50];
-		cout << "Enter the search name: ";
-		cin >> search_name;
-		cout << endl;
-		insertAfterName(id, name, age, search_name);
-		break;
+	employe* temp = head;
+	employe* prev = head;
+	for (int j = 0; j < ind; j++)
+	{
+		prev = temp;
+		temp = temp->link;
 	}
-	default: {
-		cout << "Invalid choice" << endl;
-		break;
-	}
-	}
+	prev->link = node;
+	node->link = temp;
 }
 
-void Linked_list::insertAtBeginning(long int id, char name[], int age) {
-	node* temp = new node;
-	temp->id = id;
-	strcpy(temp->name, name);
-	temp->age = age;
-	if (head == nullptr) {
-		head = temp;
-		tail = temp;
-		temp->link = nullptr;
-		print();
-		cout << endl;
-		cout << "Head: " << head->id << endl;
-		cout << "Tail: " << tail->id << endl;
-		return;
+void print(employe* head)
+{
+	employe* temp = head;
+	int i = 1;
+	while (temp)
+	{
+		cout << "Information of employee" << i++ << endl;
+		cout <<"ID-No: "<< temp->id<<endl << "Age: " << temp->age<<endl << "Name: " << temp->name << endl;
+		temp = temp->link;
 	}
-	temp->link = head;
-	head = temp;
-	print();
-	cout << endl;
-	cout << "Head: " << head->id << endl;
-	cout << "Tail: " << tail->id << endl;
 }
-
-void Linked_list::insertAtEnd(long int id, char name[], int age) {
-	node* temp = new node;
-	temp->id = id;
-	strcpy(temp->name, name);
-	temp->age = age;
-	if (head == nullptr) {
-		head = temp;
-		tail = temp;
-		temp->link = nullptr;
-		return;
+bool name_find(char* s1, char* s2)
+{
+	if (strlen(s1) != strlen(s2))
+	{
+		return 0;
 	}
-	tail->link = temp;
-	temp->link = nullptr;
-	tail = temp;
-	print();
-	cout << endl;
-	cout << "Head: " << head->id << endl;
-	cout << "Tail: " << tail->id << endl;
+	int i = 0;
+	while (s1[i] and s2[i])
+	{
+		if (s1[i] != s2[i])
+		{
+			return 0;
+		}
+		i++;
+	}
+	return 1;
 }
-
-void Linked_list::insertAtPosition(long int id, char name[], int age, int pos) {
-	if (pos <= 0) {
-		cout << "Invalid positon" << endl;
-		return;
+void insert_name(employe* &head, employe* node, char* name)
+{
+	employe* temp = head->link;
+	employe *cur = head;
+	while (cur->link)
+	{
+		if (strcmp(cur->name, name) != 0)
+		{
+			cur = temp;
+			temp = temp->link;
+		}
+		else
+			break;
 	}
-	if (head == NULL) {
-		cout << "List is empty" << endl;
-		return;
-	}
-	node* temp = new node;
-	//    node* prev = new node;
-	node* cur = head;
-	//    for(int i = 1; i < pos; i++){
-	//        prev = cur;
-	//        cur = cur->link;
-	//    }
-	//    temp->id = id;
-	//    strcpy(temp->name,name);
-	//    temp->age = age;
-	//    prev->link = temp;
-	//    temp->link = cur;
-	if (pos == 1) {
-		temp->id = id;
-		strcpy(temp->name, name);
-		temp->age = age;
-		temp->link = head;
-		head = temp;
-		print();
-		cout << endl;
-		cout << "Head: " << head->id << endl;
-		cout << "Tail: " << tail->id << endl;
-		return;
-	}
-	while (--pos > 1) {
-		cur = cur->link;
-	}
-	temp->id = id;
-	strcpy(temp->name, name);
-	temp->age = age;
-	temp->link = cur->link;
-	cur->link = temp;
-	if (temp->link == nullptr)
-		tail = temp;
-	print();
-	cout << endl;
-	cout << "Head: " << head->id << endl;
-	cout << "Tail: " << tail->id << endl;
-}
-
-void Linked_list::insertAfterName(long int id, char name[], int age, char search_name[]) {
-	node* cur = head;
-	while (cur != nullptr) {
-		if (strcmp(cur->name, search_name) == 0) {
-			node* temp = new node;
-			temp->id = id;
-			strcpy(temp->name, name);
-			temp->age = age;
-			temp->link = cur->link;
-			cur->link = temp;
-			if (temp->link == nullptr)
-				tail = temp;
+	if (!cur)
+	{
+		if (strcmp(cur->name, name)==0)
+		{
+			cur->link = node;
+			node->link = temp;
 			return;
 		}
-		cur = cur->link;
+		else
+		{
+			cout << "Name not found in this list" << endl;
+			return;
+		}
 	}
-	cout << "Name not found" << endl;
-	print();
-	cout << endl;
-	cout << "Head: " << head->id << endl;
-	cout << "Tail: " << tail->id << endl;
+	cur->link = node;
+	node->link = temp;
+	return;
 }
-
-void Linked_list::deletion() {
-	int ch;
-	cout << "\t" << "1. Delete at beginning" << endl;
-	cout << "\t" << "2. Delete at end" << endl;
-	cout << "\t" << "3. Delete at position" << endl;
-	cout << "\t" << "4. Delete by Id" << endl;
-	cout << "\t" << "5. Delete all" << endl;
-	cout << "\t" << "Enter your choice: ";
-	cin >> ch;
-	cout << endl;
-	switch (ch) {
-	case 1: {
-		deleteAtBeginning();
-		break;
-	}
-	case 2: {
-		deleteAtEnd();
-		break;
-	}
-	case 3: {
-		int pos;
-		cout << "Enter the position:";
-		cin >> pos;
-		cout << endl;
-		deleteAtPosition(pos);
-		break;
-	}
-	case 4: {
-		int id;
-		cout << "Enter the Id: ";
-		cin >> id;
-		cout << endl;
-		deleteById(id);
-		break;
-	}
-	case 5: {
-		deleteAll();
-		break;
-	}
-	default: {
-		cout << "Invalid choice" << endl;
-		break;
-	}
-	}
+employe* insert_employe()
+{
+	l++;
+	employe* temp = new employe;
+	cout << "enter the following details" << endl;
+	cout << "Id-No: ";
+	cin >> temp->id;
+	cout << "Age: ";
+	cin >> temp->age;
+	cout << "Name: ";
+	cin.ignore();
+	temp->name=create();
+	return temp;
 }
-
-void Linked_list::deleteAtBeginning() {
-	if (head == nullptr) {
-		cout << "List is empty" << endl;
+void delete_at_start(employe*& head)
+{
+	l--;
+	if (!head)
+	{
+		l++;
 		return;
 	}
-	node* temp = new node;
-	temp = head;
-	if (head == tail) {
-		tail = nullptr;
-	}
+	employe* temp = head;
 	head = head->link;
 	delete temp;
 }
-
-void Linked_list::deleteAtEnd() {
-	if (head == nullptr) {
-		cout << "List is empty" << endl;
+void delete_at_end(employe*& head)
+{
+	l--;
+	employe* temp = head;
+	employe* prev = head;
+	if (!head)
+	{
+		l++;
 		return;
 	}
-	node* cur = head;
-	while (cur->link != tail) {
-		cur = cur->link;
+	if (!head->link)
+	{
+		head = NULL;
+		delete temp;
 	}
-	node* temp = new node;
-	temp = tail;
-	cur->link = nullptr;
-	tail = cur;
+	while (temp->link)
+	{
+		prev = temp;
+		temp = temp->link;
+	}
+	prev->link = NULL;
 	delete temp;
 }
-
-void Linked_list::deleteAtPosition(int pos) {
-	if (pos <= 0) {
-		cout << "Invalid positon" << endl;
+void delete_at_position(employe*& head, int ind)
+{
+	l--;
+	if (!head)
+	{
+		l++;
 		return;
 	}
-	if (head->link == nullptr) {
-		node* temp = new node;
-		temp = head;
-		head = nullptr;
-		tail = nullptr;
+	employe* cur = head;
+	employe* prev = head;
+	if (ind == 1)
+	{
+		head = head->link;
+		delete cur;
+		return;
+	}
+	int i = 1;
+	while (cur->link && i < ind)
+	{
+		prev = cur;
+		cur = cur->link;
+		i++;
+	}
+	prev->link = cur->link;
+	delete cur;
+}
+void delete_id(employe*& head, int id)
+{
+	l--;
+	employe* temp = head;
+	employe* prev = head;
+	if (head->id == id)
+	{
+		head = head->link;
 		delete temp;
 		return;
 	}
-	node* cur = head;
-	while (--pos > 1)
-		cur = cur->link;
-	node* temp = new node;
-	temp = cur->link;
-	cur->link = temp->link;
-	if (temp == tail)
-		tail = cur;
+	if (!head)
+	{
+		l++;
+		return;
+	}
+	while (temp and temp->id != id)
+	{
+		prev = temp;
+		temp = temp->link;
+	}
+	if (!temp)
+	{
+		cout << "Id not found: " << endl;
+		l++;
+		return;
+	}
+	prev->link = temp->link;
 	delete temp;
 }
-
-void Linked_list::deleteById(long int id) {
-	node* cur = new node;
-	cur = head;
-	node* prev;
-	if (head == nullptr) {
-		cout << "List is empty" << endl;
-		return;
-	}
-	if (head == tail) {
-		if (cur->id == id) {
-			head = nullptr;
-			tail = nullptr;
-			delete cur;
-			return;
-		}
-		cout << "Id not found" << endl;
-		return;
-	}
-	if (cur->id == id) {
-		head = cur->link;
-		delete cur;
-		return;
-	}
-	else {
-		prev = cur;
-		cur = cur->link;
-	}
-	while (cur->link != nullptr) {
-		if (cur->id == id) {
-			prev->link = cur->link;
-			delete cur;
-			return;
-		}
-		prev = cur;
-		cur = cur->link;
-	}
-	if (cur->id == id) {
-		cout << cur->id << endl;
-		cout << prev->id << endl;
-		prev->link = nullptr;
-		tail = prev;
-		delete cur;
-		return;
-	}
-	cout << "Id not found" << endl;
-}
-
-void Linked_list::deleteAll() {
-	node* cur = new node;
-	cur = head;
-	if (head == nullptr) {
-		cout << "List is empty" << endl;
-		return;
-	}
-	if (head == tail) {
-		head = nullptr;
-		tail = nullptr;
-		delete cur;
-		return;
-	}
-	while (cur != nullptr) {
-		node* temp = new node;
-		temp = cur;
-		cur = cur->link;
-		delete temp;
-	}
-	head = nullptr;
-	tail = nullptr;
-}
-
-void Linked_list::finding() {
-	int ch;
-	cout << "\t" << "1. Find by name" << endl;
-	cout << "\t" << "2. Find by Id" << endl;
-	cout << "\t" << "3. Find by age" << endl;
-	cout << "\t" << "4. Find by position" << endl;
-	cout << "\t" << "Enter your choice: ";
-	cin >> ch;
-	cout << endl;
-	switch (ch) {
-	case 1: {
-		char name[50];
-		cout << "Enter the name: ";
-		cin >> name;
-		cout << endl;
-		findByName(name);
-		break;
-	}
-	case 2: {
-		int id;
-		cout << "Enter the Id:";
-		cin >> id;
-		cout << endl;
-		findById(id);
-		break;
-	}
-	case 3: {
-		int age;
-		cout << "Enter the age: ";
-		cin >> age;
-		cout << endl;
-		findByAge(age);
-		break;
-	}
-	case 4: {
-		int pos;
-		cout << "Enter the positon";
-		cin >> pos;
-		cout << endl;
-		findByPosition(pos);
-		break;
-	}
-	default: {
-		cout << "Invalid choice" << endl;
-		break;
-	}
-	}
-}
-
-void Linked_list::findByName(char name[]) {
-	node* temp = head;
-	while (temp != nullptr) {
-		if (strcmp(temp->name, name) == 0) {
-			cout << "Id: " << temp->id << endl;
-			cout << "Name: " << temp->name << endl;
-			cout << "Age: " << temp->age << endl;
-			return;
-		}
+void delete_all(employe*& head)
+{
+	employe* temp = head;
+	while (temp)
+	{
+		l--;
+		delete_at_start(temp);
 		temp = temp->link;
 	}
-	cout << "Name not found" << endl;
+	head = temp;
 }
-
-void Linked_list::findById(long int id) {
-	node* temp = head;
-	while (temp != nullptr) {
-		if (temp->id == id) {
-			cout << "Id: " << temp->id << endl;
-			cout << "Name: " << temp->name << endl;
-			cout << "Age: " << temp->age << endl;
-			return;
-		}
-		temp = temp->link;
+void Search_By_Position(employe* head, int ind)
+{
+	while (head and ind--)
+	{
+		head = head->link;
 	}
-	cout << "Id not found" << endl;
-}
-
-void Linked_list::findByAge(int age) {
-	node* temp = head;
-	while (temp != nullptr) {
-		if (temp->age == age) {
-			cout << "Id: " << temp->id << endl;
-			cout << "Name: " << temp->name << endl;
-			cout << "Age: " << temp->age << endl;
-			return;
-		}
-		temp = temp->link;
+	if (head)
+	{
+		cout << head->id << " " << head->age << " " << head->name << endl;
 	}
-	cout << "Age not found" << endl;
+	else
+	{
+		cout << "Search not found!" << endl;
+	}
 }
-
-void Linked_list::findByPosition(int pos) {
-	if (pos <= 0) {
-		cout << "Invalid position" << endl;
+void Search_By_Id(employe* head, int id)
+{
+	p = 0;
+	int flag = 0;
+	while (head)
+	{
+		if (head->id == id)
+		{
+			flag = 1;
+			if(k==0)
+			cout << head->id << " " << head->age << " " << head->name << endl;
+			break;
+		}
+		head = head->link;
+		p++;
+	}
+	if (flag==0)
+	{
+		cout << "requested id not found!" << endl;
+		p = -1;
+	}
+	k = 0;
+}
+void Search_By_Name(employe* head, char* name)
+{
+	p = 0;
+	int flag = 0;
+	while (head)
+	{
+		if (name_find(head->name, name))
+		{
+			flag = 1;
+			if(k==0)
+			cout << head->id << " " << head->age << " " << head->name << endl;
+			break;
+		}
+		head = head->link;
+		p++;
+	}
+	if (flag==0)
+	{
+		cout << "requested name not found!" << endl;
+		p = -1;
+	}
+	k = 0;
+}
+void Search_By_Age(employe* head, int age)
+{
+	p = 0;
+	int flag = 0;
+	while (head)
+	{
+		if (head->age == age)
+		{
+			flag = 1;
+			if(k==0)
+			cout << head->id << " " << head->age << " " << head->name << endl;
+			break;
+		}
+		head = head->link;
+		p++;
+	}
+	if (flag==0)
+	{
+		cout << "requested age not found!" << endl;
+		p = -1;
+	}
+	k = 0;
+}
+employe* Merge(employe* first, employe* second, int opt)
+{
+	employe* head = NULL;
+	employe* temp1 = first;
+	employe* temp2 = second;
+	employe* tail = NULL;
+	while (temp1 and temp2)
+	{
+		bool flag = temp1->comp(temp2, opt);
+		if (flag)
+		{
+			if (head == NULL)
+			{
+				head = temp1;
+				tail = head;
+				temp1 = temp1->link;
+				tail->link = NULL;
+			}
+			else
+			{
+				tail->link = temp1;
+				temp1 = temp1->link;
+				tail = tail->link;
+				tail->link = NULL;
+			}
+		}
+		else
+		{
+			if (!head)
+			{
+				head = temp2;
+				tail = head;
+				temp2 = temp2->link;
+				tail->link = NULL;
+			}
+			else
+			{
+				tail->link = temp2;
+				temp2 = temp2->link;
+				tail = tail->link;
+				tail->link = NULL;
+			}
+		}
+	}
+	while (temp1)
+	{
+		tail->link = temp1;
+		temp1 = temp1->link;
+		tail = tail->link;
+	}
+	while (temp2)
+	{
+		tail->link = temp2;
+		temp2 = temp2->link;
+		tail = tail->link;
+	}
+	return head;
+}
+void Partition(employe*& head, int opt)
+{
+	if (!head or !head->link)
+	{
 		return;
 	}
-	node* cur = head;
-	while (--pos > 0) {
-		cur = cur->link;
-		if (cur == nullptr) {
-			cout << "Out of range" << endl;
-			return;
-		}
+	employe* slow = head;
+	employe* fast = head->link;
+	while (slow and fast and fast->link)
+	{
+		slow = slow->link;
+		fast = fast->link->link;
 	}
-	cout << "Id: " << cur->id << endl;
-	cout << "Name: " << cur->name << endl;
-	cout << "Age: " << cur->age << endl;
+	employe* first = head;
+	employe* second = slow->link;
+	slow->link = NULL;
+	Partition(first, opt);
+	Partition(second, opt);
+	head = Merge(first, second, opt);
 }
+char* char_co(string ty)
+{
+	int n, j;
+	char* arr{ nullptr };
+	n = ty.length();
+	for (j = 0; j < n; j++)
+	{
+		arr = (char*)realloc(arr, (j + 1));
+		arr[j] = ty[j];
 
-void Linked_list::print() {
-	node* temp = head;
-	if (head == nullptr) {
-		cout << "List is empty" << endl;
-		return;
 	}
-	while (temp != nullptr) {
-		cout << temp->id << " " << temp->name << " " << temp->age << ", ";
-		temp = temp->link;
-	}
+	arr = (char*)realloc(arr, (j + 1));
+	arr[j] = '\0';
+
+
+
+	return arr;
 }
-
-void Linked_list::sort() {
-	int ch;
-	cout << "\t" << "1. Sort by Id" << endl;
-	cout << "\t" << "2. Sort by name" << endl;
-	cout << "\t" << "3. Sort by age" << endl;
-	cout << "\t" << "Enter your choice: ";
-	cin >> ch;
-	cout << endl;
-	switch (ch) {
-	case 1: {
-		bubbleSort("id");
-		break;
-	}
-	case 2: {
-		bubbleSort("name");
-		break;
-	}
-	case 3: {
-		bubbleSort("age");
-		break;
-	}
-	default: {
-		cout << "Invalid choice" << endl;
-		break;
-	}
-	}
+void file_c(vector <string> result, employe * head, int p)
+{
+	int n;
+	employe * temp = new employe;
+	l++;
+	stringstream s(result[3]);
+	s >> n;
+	temp->id = n;
+	temp->name = char_co(result[4]);
+	stringstream m(result[5]);
+	m >> n;
+	temp->age = n;
+	insert(head, temp, p + 1);
 }
-
-void Linked_list::bubbleSort(char param[]) {
-	int len = 0;
-	node* temp = head;
-	while (temp != nullptr) {
-		len++;
-		temp = temp->link;
-	}
-	node* cur = head;
-	node* prev = cur;
-	for (int i = 0; i < len - 1; i++) {
-		for (int j = 0; j < len - i - 1; j++) {
-			if (strcmp(param, "id") == 0) {
-				if (cur->id > cur->link->id) {
-					//                    swap(prev, cur, cur->link);
-					swap(cur, cur->link);
+int main()
+{
+	employe* head = NULL;
+	while (1)
+	{
+		char i;
+		int ind,opt;
+		employe* temp2;
+		int n = 0, a;
+		ifstream myfile;
+		cout << "linked list implementation\n";
+		cout << "1. Insert\n2. Delete\n3. Search\n4. Sort\n5. Print\n6. Read From File\n7.Exit\n";
+		cin >> i;
+		employe* temp;
+		switch (i)
+		{
+		case '1':
+			cout << "1. insert at the  begining\n2. insert at the end\n3. insert at a position\n4. insert after an existing node\n5. Main Menu\n";
+			cin >> i;
+			if (i == '1')
+			{
+				temp = insert_employe();
+				insert(head, temp,0);
+			}
+			if (i == '2')
+			{
+				temp = insert_employe();
+				temp2 = head;
+				int i = 0;
+				while (temp2)
+				{
+					temp2 = temp2->link;
+					i++;
 				}
+				insert(head, temp, i);
 			}
-			if (strcmp(param, "name") == 0) {
-				if (strcmp(cur->name, cur->link->name) > 0)
-					//                    swap(prev, cur, cur->link);
-					swap(cur, cur->link);
+			if (i == '3')
+			{
+				cout << "Enter the Index" << endl;
+				cin >> ind;
+				temp = insert_employe();
+				insert(head, temp, ind-1);
 			}
-			if (strcmp(param, "age") == 0) {
-				if (cur->age > cur->link->age)
-					//                    swap(prev, cur, cur->link);
-					swap(cur, cur->link);
+			if (i == '4')
+			{
+				cout << "Enter the name after the node need to be inserted" << endl;
+				cin.ignore();
+				char * name = create();
+				cout << name << endl;
+				temp = insert_employe();
+				insert_name(head, temp, name);
 			}
-			prev = cur;
-			cur = cur->link;
-		}
-		cur = head;
-	}
-}
+			if (i == '5')
+			{
+				break;
+			}
+			break;
+		
+		case '3':
+			
+				cout << "1. By position\n2. By name\n3. By id\n4. By age\n5. Main Menu\n";
+				cin >> opt;
+				if (opt == 1)
+				{
+					cout << "Enter position: ";
+					int temp_ind;
+					cin >> temp_ind;
+					Search_By_Position(head, temp_ind);
+				}
+				if (opt == 2)
+				{
+					cout << "Enter name: ";
+					cin.ignore();
+					char* name = create();
+					Search_By_Name(head, name);
+				}
+				if (opt == 3)
+				{
+					cout << "Enter id: ";
+					int temp_id;
+					cin >> temp_id;
+					Search_By_Id(head, temp_id);
+				}
+				if (opt == 4)
+				{
+					cout << "Enter age: ";
+					int temp_age;
+					cin >> temp_age;
+					Search_By_Age(head, temp_age);
+				}
+				if (opt == 5)
+				{
+					continue;
+				}
+				break;
+		case '5':
+			
+				print(head);
+				break;
+		
+		case '6': 
+			myfile.open("data.txt", ios::in);
+			if (myfile.is_open())
+			{
+				int j;
+				string str;
+				char* arr;
+				while (!myfile.eof())
+				{
+					while (getline(myfile, str, '\n'))
+					{
+						stringstream s(str);
+						vector<string> result;
+						while (s.good())
+						{
+							string substr;
+							getline(s, substr, ',');
+							result.push_back(substr);
+						}
+						if (result[0].compare("idx")==0)
+						{
+						    stringstream s(result[1]);
+							s >> n;
+							if (n>( l + 1))
+								cout << "insertion not possible" << endl;
+							else
+							{
+								temp = new employe;
+								l++;
+								stringstream s(result[2]);
+								s >> a;
+								temp->id = a;
+								temp->name = char_co(result[3]);
+								stringstream m(result[4]);
+								m >> a;
+								temp->age = a;
+								insert(head, temp, n-1);
+							}
 
-void Linked_list::swap(node* n1, node* n2) {
-	long int id = n1->id;
-	n1->id = n2->id;
-	n2->id = id;
-	char name[50];
-	strcpy(name, n1->name);
-	strcpy(n1->name, n2->name);
-	strcpy(n2->name, name);
-	int age = n1->age;
-	n1->age = n2->age;
-	n2->age = age;
+						}
+						else if (result[0].compare("after")==0)
+						{
+							if (result[1].compare("id")==0)
+							{
+								stringstream s(result[2]);
+								s >> n;
+								k = 1;
+								Search_By_Id(head, n);
+								if (p >= 0)
+								{
+									file_c(result, head, p );
+								}
+
+							}
+							else if (result[1].compare("name") == 0)
+							{
+								char* name = char_co(result[2]);
+								k = 1;
+								 Search_By_Name(head, name);
+								 if (p >= 0)
+								 {
+									 file_c(result, head, p );
+								 }
+							}
+							else if (result[1].compare("age") == 0)
+							{
+								stringstream s(result[2]);
+								s >> n;
+								k = 1;
+								 Search_By_Age(head, n);
+								 if (p >= 0)
+								 {
+									 file_c(result, head, p );
+								 }
+							}
+						}
+						else if (result[0].compare("before") == 0)
+						{
+							if (result[1].compare("id") == 0)
+							{
+								stringstream s(result[2]);
+								s >> n;
+								k = 1;
+								Search_By_Id(head, n);
+								if (p > 0)
+								{
+									file_c(result, head, p - 1);
+								}
+								else if (p == 0)
+									file_c(result, head, p);
+
+							}
+							else if (result[1].compare("name") == 0)
+							{
+								char* name = char_co(result[2]);
+								k = 1;
+								Search_By_Name(head, name);
+								if (p > 0)
+								{
+									file_c(result, head, p - 1);
+								}
+								else if (p == 0)
+									file_c(result, head, p);
+							}
+							else if (result[1].compare("age") == 0)
+							{
+								stringstream s(result[2]);
+								s >> n;
+								k = 1;
+								Search_By_Age(head, n);
+								if (p > 0)
+								{
+									file_c(result, head, p-1);
+								}
+								else if(p==0)
+									file_c(result, head, p );
+							}
+						}
+					}
+				}
+				myfile.close();
+			}
+			break;
+		case '7':exit(0);
+		default: break;
+		}
+	}
 }
